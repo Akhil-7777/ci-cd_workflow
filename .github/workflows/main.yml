@@ -59,4 +59,11 @@ jobs:
         push: true
         tags: |
           ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-          ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          
+
+
+
+
+
+
+
