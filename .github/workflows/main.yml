@@ -1,0 +1,55 @@
+name: Node.js CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+    
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Run tests
+      run: npm test
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Build Docker image
+      run: docker build -t ${{ env.IMAGE_NAME }} .
+    
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+    
+    - name: Push Docker image
+      run: |
+        docker tag ${{ env.IMAGE_NAME }} ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
