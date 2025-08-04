@@ -8,8 +8,9 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ github.repository }}
-  DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  # Convert repository name to lowercase and replace any uppercase
+  IMAGE_NAME: ${{ lower(github.repository) }}
+  DOCKER_USERNAME: akhil836  # Directly using your username since it's lowercase
   DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
 
 jobs:
@@ -22,13 +23,13 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Updated to LTS version
+        node-version: '16'
         cache: 'npm'
     
     - name: Install dependencies
       run: |
         npm install
-        npm install mocha --save-dev  # Ensure test dependencies are installed
+        npm install mocha --save-dev
         
     - name: Run tests
       run: |
@@ -40,6 +41,7 @@ jobs:
         npm start &
         sleep 5
         curl http://localhost:3000
+
   build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -56,8 +58,8 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ env.DOCKER_PASSWORD }}
     
     - name: Build and push
       uses: docker/build-push-action@v4
@@ -66,20 +68,4 @@ jobs:
         push: true
         tags: |
           ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
+          ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
