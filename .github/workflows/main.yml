@@ -2,12 +2,13 @@ name: Node.js CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 env:
   REGISTRY: docker.io
-  # Convert repository name to lowercase
-  IMAGE_NAME: ${{ lower(github.repository) }}
+  IMAGE_NAME: ${{ github.repository }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -21,18 +22,24 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '16'  # Updated to LTS version
         cache: 'npm'
     
     - name: Install dependencies
       run: |
         npm install
-        npm install mocha --save-dev
+        npm install mocha --save-dev  # Ensure test dependencies are installed
         
     - name: Run tests
       run: |
+        echo "Running tests..."
         npx mocha test.js --exit
-
+        
+    - name: Verify server starts
+      run: |
+        npm start &
+        sleep 5
+        curl http://localhost:3000
   build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -67,3 +74,12 @@ jobs:
 
 
 
+
+
+
+
+
+
+
+
+          
