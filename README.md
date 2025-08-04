@@ -31,7 +31,11 @@ Here's a concise summary of the CI/CD pipeline setup using GitHub Actions for a 
 ### **Outcome:**
 - **Automated:** Tests, builds, and deploys on every push.  
 - **Reliable:** Uses modern tools (Node 16, Docker Buildx).  
-- **Scalable:** Ready for cloud deployment (e.g., AWS ECS/EC2).  
+- **Scalable:** Ready for cloud deployment (e.g., AWS ECS/EC2).
+
+<img width="1920" height="932" alt="Screenshot (236)" src="https://github.com/user-attachments/assets/5349f35f-dbf4-4fec-b70a-ac415d995820" />
+<img width="1920" height="824" alt="Screenshot (96)" src="https://github.com/user-attachments/assets/b4a0936d-2624-4efe-9f13-1943f17e4bb9" />
+
 
 ### **Troubleshooting Tips:**
 - Ensure Docker Hub secrets are correctly set in GitHub.  
